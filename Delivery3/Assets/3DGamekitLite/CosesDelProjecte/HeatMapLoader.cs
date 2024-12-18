@@ -44,8 +44,8 @@ public class HeatmapLoader : MonoBehaviour
         GameObject heatPoint = Instantiate(heatPointPrefab, position, Quaternion.identity);
 
         // Escalar el punt segons la intensitat
-        float intensity = Mathf.Clamp(data.frequency / 10f, 0.1f, 1f);
-        heatPoint.transform.localScale = Vector3.one * intensity;
+        float intensity = Mathf.Clamp(data.Heath / 5f, 0.1f, 1f);
+        
 
         // Ajustar el color segons la intensitat
         Renderer renderer = heatPoint.GetComponent<Renderer>();
@@ -59,7 +59,7 @@ public class HeatmapLoader : MonoBehaviour
     private class HeatmapData
     {
         public float x, z;
-        public int frequency;
+        public int Heath;
     }
 
     [System.Serializable]
