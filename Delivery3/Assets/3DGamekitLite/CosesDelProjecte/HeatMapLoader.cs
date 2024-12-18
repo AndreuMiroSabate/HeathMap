@@ -44,14 +44,14 @@ public class HeatmapLoader : MonoBehaviour
         GameObject heatPoint = Instantiate(heatPointPrefab, position, Quaternion.identity);
 
         // Escalar el punt segons la intensitat
-        float intensity = Mathf.Clamp(data.Heath / 5f, 0.1f, 1f);
+        float intensity = Mathf.Clamp(data.Heath / 10f, 0.1f, 1f);
         
 
         // Ajustar el color segons la intensitat
         Renderer renderer = heatPoint.GetComponent<Renderer>();
         if (renderer != null)
         {
-            renderer.material.color = Color.Lerp(Color.blue, Color.red, intensity);
+            renderer.material.color = Color.Lerp(Color.green, Color.red, intensity);
         }
     }
 
