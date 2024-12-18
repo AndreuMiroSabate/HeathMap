@@ -1,10 +1,11 @@
 using System.Collections;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class DataSender : MonoBehaviour
 {
-    private const string PhpURL = "https://citmalumnes.upc.es/~andreums/DataReceiver.php";
+    private const string PhpURL = "https://citmalumnes.upc.es/~andreums/DataReciever.php";
 
     private void OnEnable()
     {
@@ -30,9 +31,9 @@ public class DataSender : MonoBehaviour
         WWWForm form = new WWWForm();
         form.AddField("data_type", "player_position");
         form.AddField("value0", "PlayerMove"); // Acció identificadora
-        form.AddField("value1", position.x.ToString());
-        form.AddField("value2", position.y.ToString());
-        form.AddField("value3", position.z.ToString());
+        form.AddField("value1", position.x.ToString((CultureInfo.InvariantCulture)));
+        form.AddField("value2", position.y.ToString((CultureInfo.InvariantCulture)));
+        form.AddField("value3", position.z.ToString((CultureInfo.InvariantCulture)));
 
         // Envia les dades al servidor
         using (UnityWebRequest www = UnityWebRequest.Post(PhpURL, form))
