@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class DataSender : MonoBehaviour
 {
-    private const string PhpURL = "https://citmalumnes.upc.es/~andreums/DataReceiver.php";
+    private const string PhpURL = "https://citmalumnes.upc.es/~andreums/DataReciever.php";
 
     private void OnEnable()
     {
