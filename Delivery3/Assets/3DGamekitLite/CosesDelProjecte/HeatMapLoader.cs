@@ -1,4 +1,3 @@
-// Updated HeatmapLoader.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +5,10 @@ using UnityEngine.Networking;
 
 public class HeatmapLoader : MonoBehaviour
 {
-    private const string PhpURL = "https://citmalumnes.upc.es/~andreums/GetHeatmapData.php";
-
     [SerializeField]
-    private GameObject heatPointPrefab; // Prefab per representar cada punt de la heatmap
+    private GameObject heatPointPrefab; // Assignar el prefab per als punts del mapa
+
+    private const string PhpURL = "https://citmalumnes.upc.es/~andreums/GetHeatmapData.php";
 
     private void Start()
     {
@@ -41,14 +40,14 @@ public class HeatmapLoader : MonoBehaviour
 
     private void GenerateHeatPoint(HeatmapData data)
     {
-        Vector3 position = new Vector3(data.x, data.y, data.z);
+        Vector3 position = new Vector3(data.x, 0, data.z); // Ajustar l'alçada (y = 0)
         GameObject heatPoint = Instantiate(heatPointPrefab, position, Quaternion.identity);
 
-        // Ajusta la mida segons la intensitat
+        // Escalar el punt segons la intensitat
         float intensity = Mathf.Clamp(data.frequency / 10f, 0.1f, 1f);
         heatPoint.transform.localScale = Vector3.one * intensity;
 
-        // Ajusta el color segons la intensitat
+        // Ajustar el color segons la intensitat
         Renderer renderer = heatPoint.GetComponent<Renderer>();
         if (renderer != null)
         {
@@ -59,7 +58,7 @@ public class HeatmapLoader : MonoBehaviour
     [System.Serializable]
     private class HeatmapData
     {
-        public float x, y, z;
+        public float x, z;
         public int frequency;
     }
 
@@ -69,3 +68,4 @@ public class HeatmapLoader : MonoBehaviour
         public List<HeatmapData> data;
     }
 }
+
