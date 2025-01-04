@@ -58,13 +58,13 @@ public class HeatmapLoader : MonoBehaviour
         Renderer renderer = heatPoint.GetComponent<Renderer>();
         if (renderer != null)
         {
-            if (intensity < 0.5f)
+            if (intensity <= 0.5f)
             {
-                renderer.material.color = Color.Lerp(Color.green, Color.yellow, intensity);
+                renderer.material.color = Color.Lerp(Color.green, Color.red, intensity);
             }
             else
             {
-                renderer.material.color = Color.Lerp(Color.green, Color.yellow, intensity);
+                renderer.material.color = Color.Lerp(Color.yellow, Color.red, intensity);
             }
 
         }
