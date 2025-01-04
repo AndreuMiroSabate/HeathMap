@@ -6,9 +6,12 @@ using UnityEngine.Networking;
 public class HeatmapLoader : MonoBehaviour
 {
     [SerializeField]
-    private GameObject heatPointPrefab; // Assignar el prefab per als punts del mapa
+    private GameObject heatPointPrefab; // Prefab para los puntos del mapa de calor
 
     private const string PhpURL = "https://citmalumnes.upc.es/~andreums/GetHeatmapData.php";
+
+    // Diccionario para almacenar los puntos de calor por acción
+    private Dictionary<string, List<GameObject>> heatmapPointsByAction = new Dictionary<string, List<GameObject>>();
 
     private void Start()
     {
@@ -23,7 +26,7 @@ public class HeatmapLoader : MonoBehaviour
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Error carregant dades: {www.error}");
+                Debug.LogError($"Error cargando datos: {www.error}");
             }
             else
             {
@@ -40,18 +43,59 @@ public class HeatmapLoader : MonoBehaviour
 
     private void GenerateHeatPoint(HeatmapData data)
     {
-        Vector3 position = new Vector3(data.x, 0, data.z); // Ajustar l'alçada (y = 0)
+        if (string.IsNullOrEmpty(data.action))
+        {
+            Debug.LogError("HeatmapData.Action es nulo o vacío. Revisa los datos del servidor.");
+            return;
+        }
+        Vector3 position = new Vector3(data.x, 10, data.z); // Ajustar la altura (y = 10)
         GameObject heatPoint = Instantiate(heatPointPrefab, position, Quaternion.identity);
 
-        // Escalar el punt segons la intensitat
+        // Escalar el punto según la intensidad
         float intensity = Mathf.Clamp(data.Heath / 10f, 0.1f, 1f);
-        
 
-        // Ajustar el color segons la intensitat
+        // Ajustar el color según la acción
         Renderer renderer = heatPoint.GetComponent<Renderer>();
         if (renderer != null)
         {
-            renderer.material.color = Color.Lerp(Color.green, Color.red, intensity);
+            if (intensity < 0.5f)
+            {
+                renderer.material.color = Color.Lerp(Color.green, Color.yellow, intensity);
+            }
+            else
+            {
+                renderer.material.color = Color.Lerp(Color.green, Color.yellow, intensity);
+            }
+
+        }
+
+        // Añadir el punto al diccionario
+        if (!heatmapPointsByAction.ContainsKey(data.action))
+        {
+            heatmapPointsByAction[data.action] = new List<GameObject>();
+        }
+        heatmapPointsByAction[data.action].Add(heatPoint);
+    }
+
+    // Métodos para activar o desactivar los puntos por acción
+    public void SetHeatmapVisibility(string action, bool isVisible)
+    {
+        if (string.IsNullOrEmpty(action))
+        {
+            Debug.LogError("La clave 'action' es nula o vacía.");
+            return;
+        }
+
+        if (heatmapPointsByAction.ContainsKey(action))
+        {
+            foreach (var point in heatmapPointsByAction[action])
+            {
+                point.SetActive(isVisible);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No se encontraron puntos para la acción '{action}'.");
         }
     }
 
@@ -60,6 +104,7 @@ public class HeatmapLoader : MonoBehaviour
     {
         public float x, z;
         public int Heath;
+        public string action; // Nueva propiedad para la acción
     }
 
     [System.Serializable]
@@ -68,4 +113,5 @@ public class HeatmapLoader : MonoBehaviour
         public List<HeatmapData> data;
     }
 }
+
 

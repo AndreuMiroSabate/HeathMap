@@ -9,44 +9,71 @@ public class DataSender : MonoBehaviour
 
     private void OnEnable()
     {
-        // Subscripció a l'esdeveniment de posició del jugador
+        // Subscripción a los eventos del EventTracker
         EventTracker.OnPlayerPosition += SendPlayerPositionData;
+        EventTracker.OnPlayerDeath += SendPlayerDeath;
+        EventTracker.OnPlayerDamaged += SendPlayerDamaged;
+        EventTracker.OnPlayerBecomeVulnerable += SendPlayerBecomeVulnerable;
+        EventTracker.OnPlayerHitInvulnerable += SendPlayerHitInvulnerable;
     }
 
     private void OnDisable()
     {
-        // Desubscripció de l'esdeveniment
+        // Desuscripción de los eventos
         EventTracker.OnPlayerPosition -= SendPlayerPositionData;
+        EventTracker.OnPlayerDeath -= SendPlayerDeath;
+        EventTracker.OnPlayerDamaged -= SendPlayerDamaged;
+        EventTracker.OnPlayerBecomeVulnerable -= SendPlayerBecomeVulnerable;
+        EventTracker.OnPlayerHitInvulnerable -= SendPlayerHitInvulnerable;
     }
 
     private void SendPlayerPositionData(Vector3 position)
     {
-        // Crida a la corrutina per enviar les dades
-        StartCoroutine(SendDataToPHP(position));
+        StartCoroutine(SendDataToPHP(position, "PlayerMove"));
     }
 
-    private IEnumerator SendDataToPHP(Vector3 position)
+    private void SendPlayerDeath(Vector3 position)
     {
-        // Prepara les dades per enviar
+        StartCoroutine(SendDataToPHP(position, "Death"));
+    }
+
+    private void SendPlayerDamaged(Vector3 position)
+    {
+        StartCoroutine(SendDataToPHP(position, "Damaged"));
+    }
+
+    private void SendPlayerBecomeVulnerable(Vector3 position)
+    {
+        StartCoroutine(SendDataToPHP(position, "Vulnerable"));
+    }
+
+    private void SendPlayerHitInvulnerable(Vector3 position)
+    {
+        StartCoroutine(SendDataToPHP(position, "HitInvulnerable"));
+    }
+
+    private IEnumerator SendDataToPHP(Vector3 position, string action)
+    {
+        // Prepara las datos para enviar
         WWWForm form = new WWWForm();
         form.AddField("data_type", "player_position");
-        form.AddField("value0", "PlayerMove"); // Acció identificadora
-        form.AddField("value1", position.x.ToString((CultureInfo.InvariantCulture)));
-        form.AddField("value2", position.y.ToString((CultureInfo.InvariantCulture)));
-        form.AddField("value3", position.z.ToString((CultureInfo.InvariantCulture)));
+        form.AddField("value0", action); // Acción identificadora
+        form.AddField("value1", position.x.ToString(CultureInfo.InvariantCulture));
+        form.AddField("value2", position.y.ToString(CultureInfo.InvariantCulture));
+        form.AddField("value3", position.z.ToString(CultureInfo.InvariantCulture));
 
-        // Envia les dades al servidor
+        // Envía los datos al servidor
         using (UnityWebRequest www = UnityWebRequest.Post(PhpURL, form))
         {
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Error enviant dades: {www.error}");
+                Debug.LogError($"Error enviando datos: {www.error}");
             }
             else
             {
-                Debug.Log("Dades de posició enviades correctament");
+                Debug.Log("Datos enviados correctamente: " + action);
             }
         }
     }
