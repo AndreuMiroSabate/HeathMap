@@ -56,32 +56,29 @@ public class HeatmapLoader : MonoBehaviour
 
         // Ajustar el color según la acción
         Renderer renderer = heatPoint.GetComponent<Renderer>();
+
         if (renderer != null)
         {
-            if (renderer != null)
+            Color[] colors = new Color[]
             {
-                
-                Color[] colors = new Color[]
-                {
-                    Color.blue,
-                    Color.cyan,
-                    Color.green,
-                    Color.yellow,
-                    Color.red
-                };
+                Color.blue,
+                Color.cyan,
+                Color.green,
+                Color.yellow,
+                Color.red
+            };
 
-                float scaledIntensity = intensity * (colors.Length - 1);
-                int index = Mathf.FloorToInt(scaledIntensity);
-                float t = scaledIntensity - index;
+            float scaledIntensity = intensity * (colors.Length - 1);
+            int index = Mathf.FloorToInt(scaledIntensity);
+            float t = scaledIntensity - index;
 
-                if (index >= colors.Length - 1)
-                {
-                    renderer.material.color = colors[colors.Length - 1];
-                }
-                else
-                {
-                    renderer.material.color = Color.Lerp(colors[index], colors[index + 1], t);
-                }
+            if (index >= colors.Length - 1)
+            {
+                renderer.material.color = colors[colors.Length - 1];
+            }
+            else
+            {
+                renderer.material.color = Color.Lerp(colors[index], colors[index + 1], t);
             }
         }
 
