@@ -58,15 +58,31 @@ public class HeatmapLoader : MonoBehaviour
         Renderer renderer = heatPoint.GetComponent<Renderer>();
         if (renderer != null)
         {
-            if (intensity <= 0.5f)
+            if (renderer != null)
             {
-                renderer.material.color = Color.Lerp(Color.green, Color.red, intensity);
-            }
-            else
-            {
-                renderer.material.color = Color.Lerp(Color.yellow, Color.red, intensity);
-            }
+                
+                Color[] colors = new Color[]
+                {
+                    Color.blue,
+                    Color.cyan,
+                    Color.green,
+                    Color.yellow,
+                    Color.red
+                };
 
+                float scaledIntensity = intensity * (colors.Length - 1);
+                int index = Mathf.FloorToInt(scaledIntensity);
+                float t = scaledIntensity - index;
+
+                if (index >= colors.Length - 1)
+                {
+                    renderer.material.color = colors[colors.Length - 1];
+                }
+                else
+                {
+                    renderer.material.color = Color.Lerp(colors[index], colors[index + 1], t);
+                }
+            }
         }
 
         // Añadir el punto al diccionario
